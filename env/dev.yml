@@ -1,0 +1,39 @@
+version: "2"
+services:
+  app:
+    build:
+      context: ../
+    volumes:
+      - cache:/var/www/app/cache
+      - ..:/var/www
+    ports:
+      - 8080:8080
+    environment:
+      - PHP_OPCACHE_ENABLE=0
+
+  # Depdendency manager
+  update:
+    image: tico/composer
+    command: ["update", "--no-dev", "--ignore-platform-reqs", "--no-ansi", "--no-interaction", "--no-progress", "--no-scripts", "-a", "-d", "/app"]
+    volumes: ['..:/app']
+
+  # Used for REST API or microservices
+  phpunit:
+    image: phpunit/phpunit
+    command: ["--coverage-text","--coverage-html", "/app/tests/coverage", "--colors=never"]
+    volumes: ['..:/app']
+
+  # Used for REST API, microservices and fullstack
+  codeception:
+    image: codeception/codeception
+    volumes: ['..:/project']
+
+  # Used with codeception for UI (acceptance) testing
+  selenium:
+    image: selenium/standalone-chrome
+
+volumes:
+  cache:
+    driver_opts:
+      type: tmpfs
+      device: tmpfs

@@ -1,0 +1,125 @@
+image: tico/docker
+
+variables:
+    TARGET_PATH: /root/app
+    SENTRY_WEBHOOK: https://github.com/getsentry/sentry/issues/2367 #Replace it with your webhook, can be found in sentry project -> releases page
+    IMAGE_APP: $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_NAME
+    DOCKER_DRIVER: overlay
+
+cache:
+    paths:
+    - .php_cs.cache
+    - app/vendor
+
+services:
+    - docker:dind
+
+stages:
+    - test
+    - build
+    - deploy
+
+before_script:
+  - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
+
+.up: &up
+  before_script:
+    - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
+    - docker-compose run update
+    - docker-compose up -d
+    - sleep 30
+    - docker-compose exec -T app phinx migrate || true
+    - docker-compose exec -T app phinx seed:run || true
+
+.deploy: &deploy
+  script:
+    - cibu prepare-ssh
+    - cibu compose login gitlab-ci-token $CI_JOB_TOKEN $CI_REGISTRY
+    - sed -i "s/RELEASE_PLACEHOLDER/${SENTRY_RELEASE}/g" env/$CI_ENVIRONMENT_SLUG.yml
+    - scp env/$CI_ENVIRONMENT_SLUG.yml $TARGET_HOST:$TARGET_PATH/docker-compose.yml
+    - cibu compose pull
+    - cibu compose update app
+    - cibu compose up -d --no-deps --no-recreate
+    - cibu compose cleanup
+    - cibu sentry release $SENTRY_RELEASE $CI_PROJECT_URL/pipelines/$CI_PIPELINE_ID
+
+.tags: &tags
+  tags:
+    - docker
+
+
+codestyle:
+    stage: test
+    script:
+      - docker run -v `pwd`:/app tico/php-cs-fixer fix --dry-run --diff
+    <<: *tags
+
+phpunit:
+    stage: test
+    <<: *up
+    script:
+      - docker-compose run phpunit
+    artifacts:
+        name: "phpunit"
+        paths:
+          - app/tests/coverage/
+    <<: *tags
+
+codeception:
+    stage: test
+    <<: *up
+    script:
+      - docker-compose run codeception run --html report.html
+    artifacts:
+        name: "codeception"
+        paths:
+          - app/tests/_output/
+    <<: *tags
+
+build:
+    stage: build
+    only:
+        - master
+        - develop
+    script:
+        - docker-compose run update
+        - docker build -t $IMAGE_APP .
+        - docker push $IMAGE_APP
+    <<: *tags
+
+build_swagger:
+    stage: build
+    only:
+        - master
+        - develop
+    script:
+        - docker run -v `pwd`:/app -i tico/swagger-php app/src
+        - docker build -f Dockerfile.swaggerui -t $IMAGE_SWAGGER .
+        - docker push $IMAGE_SWAGGER
+    <<: *tags
+
+deploy_staging:
+    stage: deploy
+    only:
+        - develop
+    environment:
+      name: qa
+      url: https://qa.example.com
+    variables:
+      TARGET_HOST: root@qa.example.com
+      SENTRY_RELEASE: $CI_ENVIRONMENT_SLUG-$CI_PIPELINE_ID
+    <<: *deploy
+    <<: *tags
+
+deploy_production:
+    stage: deploy
+    only:
+        - master
+    environment:
+      name: prod
+      url: https://example.com
+    variables:
+      TARGET_HOST: root@example.com
+      SENTRY_RELEASE: $CI_ENVIRONMENT_SLUG-$CI_PIPELINE_ID
+    <<: *deploy
+    <<: *tags

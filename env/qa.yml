@@ -1,0 +1,30 @@
+version: "2"
+services:
+  app:
+    image: frameworkwtf/docker
+    environment:
+      APP_ENV: qa
+      APP_RELEASE: RELEASE_PLACEHOLDER
+      VIRTUAL_HOST: qa.framework.wtf
+      LETSENCRYPT_HOST: qa.framework.wtf
+      LETSENCRYPT_EMAIL: you@example.com
+      VIRTUAL_PORT: 8080
+  proxy:
+    image: tico/nginx-proxy
+    ports:
+      - 80:80
+      - 443:443
+    volumes:
+      - /tmp/certs:/etc/nginx/certs:ro
+      - /tmp/vhost.d:/etc/nginx/vhost.d
+      - /tmp/html:/usr/share/nginx/html
+      - /var/run/docker.sock:/tmp/docker.sock:ro
+  ssl:
+    image: jrcs/letsencrypt-nginx-proxy-companion
+    volumes:
+      - /tmp/certs:/etc/nginx/certs
+      - /tmp/vhost.d:/etc/nginx/vhost.d
+      - /tmp/html:/usr/share/nginx/html
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    depends_on:
+      - proxy

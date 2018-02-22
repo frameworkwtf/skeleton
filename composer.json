@@ -1,0 +1,33 @@
+{
+    "name": "wtf/skeleton",
+    "description": "Skeleton for WTF Framework",
+    "license": "MIT",
+    "prefer-stable": true,
+    "repositories":[
+        {
+            "type":"composer",
+            "url":"https://pkg.titanium.codes"
+        }
+    ],
+    "require": {
+        "wtf/core": "^1",
+        "hirak/prestissimo": "@stable",
+        "monolog/monolog": "@stable"
+    },
+    "autoload": {
+        "psr-4": {
+            "App\\": "app/src/"
+        }
+    },
+    "config": {
+        "preferred-install": "dist",
+        "optimize-autoloader": true,
+        "discard-changes": true,
+        "vendor-dir": "app/vendor"
+    },
+    "scripts": {
+        "post-create-project-cmd": [
+            "rm -f CODE_OF_CONDUCT.md CONTRIBUTING.md LICENSE README.md .travis.yml"
+        ]
+    }
+}
