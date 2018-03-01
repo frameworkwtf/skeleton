@@ -19,7 +19,7 @@ services:
 
   # Used for REST API or microservices
   phpunit:
-    image: phpunit/phpunit
+    image: tico/phpunit
     command: ["--coverage-text","--coverage-html", "/app/tests/coverage", "--colors=never"]
     volumes: ['..:/app']
 
