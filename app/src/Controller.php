@@ -6,9 +6,24 @@ namespace App;
 
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Wtf\Root;
 
-class Controller extends \Wtf\Root
+class Controller extends Root
 {
+    /**
+     * Response template.
+     *
+     * @var array
+     */
+    protected $defaultResponse = [
+        'error' => [
+            'message' => null,
+            'fields' => [],
+        ],
+        'count' => 0,
+        'data' => [],
+    ];
+
     /**
      * Invoke controller.
      *
@@ -22,20 +37,81 @@ class Controller extends \Wtf\Root
     {
         $this->request = $request;
         $this->response = $response;
-        $name = explode('-', $request->getAttribute('route')->getName());
-        $action = strtolower(end($name)).'Action';
+        if ($request->getAttribute('route')) {
+            $name = explode('-', $request->getAttribute('route')->getName());
+            $action = strtolower(end($name)).'Action';
 
-        if (method_exists($this, $action)) {
-            $response = call_user_func([$this, $action]);
+            if (method_exists($this, $action)) {
+                $response = call_user_func([$this, $action]);
+            } else {
+                $response = $this->notFoundAction();
+            }
         } else {
-            $response = $this->notFoundHandler($request, $response);
+            $response = $this->notFoundAction();
         }
-        $this->logger->debug("Request\nURL     |> ".$request->getUri()->__toString(), [
+        $this->logger->debug('Request '.$request->getUri()->__toString(), [
             'method' => $request->getMethod(),
             'status' => $response->getStatusCode(),
             'request body' => $request->getParsedBody(),
             'response body' => $response->getBody()->__toString(),
         ]);
+
+        return $response;
+    }
+
+    /**
+     * 404 Error.
+     *
+     * @return ResponseInterface
+     */
+    public function notFoundAction(): ResponseInterface
+    {
+        return $this->notFoundHandler->__invoke($this->request, $this->response);
+    }
+
+    /**
+     * Prepare JSON response.
+     *
+     * @param array $data
+     * @param int   $status HTTP status code, default: null
+     *
+     * @return ResponseInterface
+     */
+    public function json(array $data, int $status = null): ResponseInterface
+    {
+        $response = $this->preprocessResponse($data);
+        if (!$status) {
+            $status = ($response['error']['message'] ?? null) ? 400 : 200;
+        }
+
+        return $this->response->withStatus($status)->withJson($response);
+    }
+
+    /**
+     * Pre-process response data.
+     *
+     * @param array $data
+     *
+     * @return array
+     */
+    protected function preprocessResponse(array $data): array
+    {
+        $response = $this->defaultResponse;
+        if ($data['error']['message'] ?? null) {
+            $response['error']['message'] = $data['error']['message'];
+            unset($data['error']['message']);
+        }
+        if ($data['error']['fields'] ?? null) {
+            $response['error']['fields'] = $data['error']['fields'];
+            unset($data['error']['fields']);
+        }
+
+        if (isset($data['error'])) {
+            unset($data['error']);
+        }
+
+        $response['count'] = count($data);
+        $response['data'] = $data;
 
         return $response;
     }
