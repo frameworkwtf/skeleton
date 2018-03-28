@@ -18,9 +18,9 @@ class Router extends \Wtf\Root
     {
         foreach ($this->config('routes') as $group_name => $routes) {
             $app->group($group_name, function () use ($group_name, $routes): void {
-                $name = ('/' === $group_name || !$group_name) ? 'index' : trim($group_name, '/');
-                $controller = '\App\Controller\\'.ucfirst($name);
-                if (!class_exists($controller)) {
+                $name = ('/' === $group_name || !$group_name) ? 'index' : \trim($group_name, '/');
+                $controller = '\App\Controller\\'.\ucfirst($name);
+                if (!\class_exists($controller)) {
                     throw new \Exception('Controller for group '.$name.' not found');
                 }
 

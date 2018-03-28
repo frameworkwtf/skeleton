@@ -18,8 +18,8 @@ $routes = [
     ],
 ];
 
-foreach (glob(__DIR__.'/routes/*.php') as $item) {
-    $group = current(explode('.', basename($item)));
+foreach (\glob(__DIR__.'/routes/*.php') as $item) {
+    $group = \current(\explode('.', \basename($item)));
     $routes['/'.$group] = include $item;
 }
 

@@ -1,23 +1,23 @@
 <?php
 $finder = \PhpCsFixer\Finder::create()
-    ->exclude('app/vendor')
-    ->exclude('env')
+    ->exclude('vendor')
     ->in(__DIR__);
 
 return \PhpCsFixer\Config::create()
     ->setRiskyAllowed(true)
     ->setRules(array(
+        '@PHP71Migration' => true,
+        '@PHP71Migration:risky' => true,
         '@PSR1' => true,
         '@PSR2' => true,
         '@Symfony' => true,
         '@Symfony:risky' => true,
-        '@PHP71Migration' => true,
-        '@PHP71Migration:risky' => true,
         'array_syntax' => ['syntax' => 'short'],
         'list_syntax' => ['syntax' => 'short'],
-        'no_short_echo_tag' => true,
+        'native_function_invocation' => true,
         'no_extra_consecutive_blank_lines' => ['tokens' => ['break', 'continue', 'extra', 'return', 'throw', 'use', 'parenthesis_brace_block', 'square_brace_block', 'curly_brace_block']],
         'no_null_property_initialization' => true,
+        'no_short_echo_tag' => true,
         'no_short_echo_tag' => true,
         'no_superfluous_elseif' => true,
         'no_unneeded_curly_braces' => true,

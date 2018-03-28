@@ -38,11 +38,11 @@ class Controller extends Root
         $this->request = $request;
         $this->response = $response;
         if ($request->getAttribute('route')) {
-            $name = explode('-', $request->getAttribute('route')->getName());
-            $action = strtolower(end($name)).'Action';
+            $name = \explode('-', $request->getAttribute('route')->getName());
+            $action = \strtolower(\end($name)).'Action';
 
-            if (method_exists($this, $action)) {
-                $response = call_user_func([$this, $action]);
+            if (\method_exists($this, $action)) {
+                $response = \call_user_func([$this, $action]);
             } else {
                 $response = $this->notFoundAction();
             }
@@ -110,7 +110,7 @@ class Controller extends Root
             unset($data['error']);
         }
 
-        $response['count'] = count($data);
+        $response['count'] = \count($data);
         $response['data'] = $data;
 
         return $response;

@@ -100,7 +100,7 @@ class RBAC
      */
     protected function isAllowed(string $role): bool
     {
-        $allowed = in_array($this->resource, $this->container['config']('rbac.acl.'.$role, []), true);
+        $allowed = \in_array($this->resource, $this->container['config']('rbac.acl.'.$role, []), true);
         $this->record('Role "'.$role.'" allowed: '.(int) $allowed);
 
         return (bool) $allowed;
