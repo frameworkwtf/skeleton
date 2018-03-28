@@ -1,7 +1,7 @@
 <?php
 $finder = \PhpCsFixer\Finder::create()
-    ->exclude('vendor')
-    ->in(__DIR__);
+    ->exclude('app/vendor')
+    ->in('app');
 
 return \PhpCsFixer\Config::create()
     ->setRiskyAllowed(true)
