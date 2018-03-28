@@ -11,6 +11,12 @@ services:
     environment:
       - PHP_OPCACHE_ENABLE=0
 
+  blackfire:
+    image: blackfire/blackfire
+    environment:
+      - BLACKFIRE_SERVER_ID
+      - BLACKFIRE_SERVER_TOKEN
+
   # Depdendency manager
   update:
     image: tico/composer
