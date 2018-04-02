@@ -81,7 +81,7 @@ class Controller extends Root
     {
         $response = $this->preprocessResponse($data);
         if (!$status) {
-            $status = ($response['error']['message'] ?? null) ? 400 : 200;
+            $status = ($response['error']['message'] ?? null || $response['error']['fields'] ?? null) ? 400 : 200;
         }
 
         return $this->response->withStatus($status)->withJson($response);
