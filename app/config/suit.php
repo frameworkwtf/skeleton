@@ -27,6 +27,9 @@ return [
             ],
         ],
     ],
+    'namespaces' => [
+        'controller' => '\\App\\Controller\\',
+    ],
 
     'settings' => [
         'displayErrorDetails' => ('prod' === \getenv('APP_ENV')) ? false : true,

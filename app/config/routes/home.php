@@ -3,12 +3,10 @@
 declare(strict_types=1);
 
 return [
-    '' => [
-        'action' => 'index',
-        'methods' => ['GET'],
+    'index' => [
     ],
-    '/second' => [
+    'second' => [
+        'pattern' => '/second',
         'action' => 'second',
-        'methods' => ['GET'],
     ],
 ];

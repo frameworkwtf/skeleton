@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace App;
 
+use Psr\Http\Message\ResponseInterface as Response;
+use Psr\Http\Message\ServerRequestInterface as Request;
+
 /**
  * Application level router.
  */
@@ -18,15 +21,15 @@ class Router extends \Wtf\Root
     {
         foreach ($this->config('routes') as $group_name => $routes) {
             $app->group($group_name, function () use ($group_name, $routes): void {
-                $name = ('/' === $group_name || !$group_name) ? 'index' : \trim($group_name, '/');
-                $controller = '\App\Controller\\'.\ucfirst($name);
-                if (!\class_exists($controller)) {
-                    throw new \Exception('Controller for group '.$name.' not found');
-                }
-
-                foreach ($routes as $pattern => $info) {
-                    $this->map($info['methods'] ?? ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'], $pattern, $controller)
-                        ->setName($info['name'] ?? $name.'-'.($info['action'] ?? $pattern));
+                $controller = ('/' === $group_name || !$group_name) ? 'index' : \trim($group_name, '/');
+                foreach ($routes as $name => $route) {
+                    $this->map(
+                        $route['methods'] ?? ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+                        $route['pattern'] ?? '',
+                        function (Request $request, Response $response, array $args = []) use ($controller) {
+                            return $this['controller']($controller)->__invoke($request, $response, $args);
+                        }
+                    )->setName($controller.'-'.$name);
                 }
             });
         }
