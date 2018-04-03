@@ -9,15 +9,13 @@ declare(strict_types=1);
  */
 $routes = [
     '/' => [ //Default group for /
-        'index' => [ //route name
+        'index' => [ //route name and action in controller
             'pattern' => '', //pattern
-            'action' => 'index', //action in controller
             'methods' => ['GET'], //Allowed HTTP methods
         ],
         'second' => [ //route name
             'pattern' => 'second', //pattern
             //all other fields will be defaults
-            //action = index
             //methods = ['GET']
         ],
     ],
