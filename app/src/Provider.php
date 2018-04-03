@@ -17,22 +17,9 @@ class Provider implements ServiceProviderInterface
      */
     public function register(Container $container): void
     {
-        $container['app_router'] = $this->setAppRouter();
         $container['baseurl_middleware'] = $this->setBaseurlMiddleware();
         $container['appErrorHandler'] = $this->setAppErrorHandler();
         $container['logger'] = $this->setLogger();
-    }
-
-    /**
-     * Set App Router instance.
-     *
-     * @return callable
-     */
-    protected function setAppRouter(): callable
-    {
-        return function ($c) {
-            return new Router($c);
-        };
     }
 
     /**
