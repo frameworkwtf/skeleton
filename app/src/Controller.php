@@ -44,10 +44,10 @@ class Controller extends Root
             if (\method_exists($this, $action)) {
                 $response = \call_user_func([$this, $action]);
             } else {
-                $response = $this->notFoundAction();
+                $response = $this->notFoundHandler->__invoke($this->request, $this->response);
             }
         } else {
-            $response = $this->notFoundAction();
+            $response = $this->notFoundHandler->__invoke($this->request, $this->response);
         }
         $this->logger->debug('Request '.$request->getUri()->__toString(), [
             'method' => $request->getMethod(),
@@ -57,16 +57,6 @@ class Controller extends Root
         ]);
 
         return $response;
-    }
-
-    /**
-     * 404 Error.
-     *
-     * @return ResponseInterface
-     */
-    public function notFoundAction(): ResponseInterface
-    {
-        return $this->notFoundHandler->__invoke($this->request, $this->response);
     }
 
     /**

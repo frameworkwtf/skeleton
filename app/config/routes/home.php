@@ -7,6 +7,5 @@ return [
     ],
     'second' => [
         'pattern' => '/second',
-        'action' => 'second',
     ],
 ];
