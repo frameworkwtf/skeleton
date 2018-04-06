@@ -17,9 +17,12 @@ class Provider implements ServiceProviderInterface
      */
     public function register(Container $container): void
     {
-        $container['baseurl_middleware'] = $this->setBaseurlMiddleware();
         $container['appErrorHandler'] = $this->setAppErrorHandler();
         $container['logger'] = $this->setLogger();
+        $container['baseurl_middleware'] = $this->setBaseurlMiddleware();
+        $container['filters_middleware'] = function ($c) {
+            return new \Wtf\Middleware\Filters($c);
+        };
     }
 
     /**

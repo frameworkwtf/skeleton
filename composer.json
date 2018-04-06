@@ -3,6 +3,7 @@
     "description": "Skeleton for WTF Framework",
     "license": "MIT",
     "prefer-stable": true,
+    "minimum-stability": "dev",
     "repositories":[
         {
             "type":"composer",
@@ -10,9 +11,16 @@
         }
     ],
     "require": {
-        "wtf/core": "^1",
         "hirak/prestissimo": "@stable",
-        "monolog/monolog": "@stable"
+        "monolog/monolog": "@stable",
+        "wtf/auth": "^1",
+        "wtf/core": "^1",
+        "wtf/middleware-filters": "^1",
+        "wtf/orm": "^1",
+        "wtf/rest": "^1"
+    },
+    "require-dev": {
+        "wtf/generator": "dev-master"
     },
     "autoload": {
         "psr-4": {
@@ -27,7 +35,7 @@
     },
     "scripts": {
         "post-create-project-cmd": [
-            "rm -f CODE_OF_CONDUCT.md CONTRIBUTING.md LICENSE README.md .travis.yml"
+            "rm -f CODE_OF_CONDUCT.md CONTRIBUTING.md LICENSE README.md .travis.yml _config"
         ]
     },
     "replace": {
