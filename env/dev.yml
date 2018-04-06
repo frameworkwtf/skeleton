@@ -11,6 +11,18 @@ services:
     environment:
       - PHP_OPCACHE_ENABLE=0
 
+  mysql:
+    image: mysql
+    volumes:
+      - ../app/cache/mysql:/var/lib/mysql
+    ports:
+      - 3306:3306
+    environment:
+      - MYSQL_DATABASE=app
+      - MYSQL_USER=app
+      - MYSQL_PASSWORD=app
+      - MYSQL_RANDOM_ROOT_PASSWORD=1
+
   blackfire:
     image: blackfire/blackfire
     environment:
