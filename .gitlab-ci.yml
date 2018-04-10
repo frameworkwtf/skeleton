@@ -54,6 +54,13 @@ codestyle:
       - docker run -v `pwd`:/app tico/php-cs-fixer fix --dry-run --diff
     <<: *tags
 
+security:
+    stage: test
+    script:
+      - docker-compose run update
+      - docker run -v `pwd`:/app tico/security-check security:check composer.lock
+    <<: *tags
+
 phpunit:
     stage: test
     <<: *up
