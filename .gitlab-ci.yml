@@ -61,6 +61,13 @@ security:
       - docker run -v `pwd`:/app tico/security-check security:check composer.lock
     <<: *tags
 
+unused dependencies:
+    stage: test
+    script:
+      - docker-compose run update
+      - docker run -v `pwd`:/app tico/unused-scanner unused.php --silent
+    <<: *tags
+
 phpunit:
     stage: test
     <<: *up

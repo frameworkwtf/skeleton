@@ -11,7 +11,6 @@
         }
     ],
     "require": {
-        "hirak/prestissimo": "@stable",
         "monolog/monolog": "@stable",
         "wtf/auth": "^1",
         "wtf/core": "^1",
