@@ -65,7 +65,7 @@ unused dependencies:
     stage: test
     script:
       - docker-compose run update
-      - docker run -v `pwd`:/app tico/unused-scanner unused.php
+      - docker run -v `pwd`:/app tico/unused-scanner unused.php --silent
     <<: *tags
 
 phpunit:
