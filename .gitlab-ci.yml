@@ -58,7 +58,7 @@ security:
     stage: test
     script:
       - docker-compose run update
-      - docker run -v `pwd`:/app tico/security-check security:check composer.lock
+      - docker run -v `pwd`:/app tico/security-checker security:check composer.lock
     <<: *tags
 
 unused dependencies:
