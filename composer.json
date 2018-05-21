@@ -4,12 +4,6 @@
     "license": "MIT",
     "prefer-stable": true,
     "minimum-stability": "dev",
-    "repositories":[
-        {
-            "type":"composer",
-            "url":"https://pkg.titanium.codes"
-        }
-    ],
     "require": {
         "monolog/monolog": "@stable",
         "wtf/auth": "^1",
