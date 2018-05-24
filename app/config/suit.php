@@ -25,8 +25,8 @@ return [
             'excluded_app_paths' => [
                 $cache_dir,
             ],
-            'prefixies' => [
-                \dirname(__DIR__),
+            'prefixes' => [
+                \dirname(__DIR__).'/src/',
             ],
             'tags' => [
                 'interface' => PHP_SAPI,

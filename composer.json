@@ -3,7 +3,6 @@
     "description": "Skeleton for WTF Framework",
     "license": "MIT",
     "prefer-stable": true,
-    "minimum-stability": "dev",
     "require": {
         "monolog/monolog": "@stable",
         "wtf/auth": "^1",
@@ -11,9 +10,6 @@
         "wtf/middleware-filters": "^1",
         "wtf/orm": "^1",
         "wtf/rest": "^1"
-    },
-    "require-dev": {
-        "wtf/generator": "dev-master"
     },
     "autoload": {
         "psr-4": {
@@ -25,13 +21,5 @@
         "optimize-autoloader": true,
         "discard-changes": true,
         "vendor-dir": "app/vendor"
-    },
-    "scripts": {
-        "post-create-project-cmd": [
-            "rm -f CODE_OF_CONDUCT.md CONTRIBUTING.md LICENSE README.md .travis.yml _config.yml"
-        ]
-    },
-    "replace": {
-        "tisuit/skeleton": "*"
     }
 }
