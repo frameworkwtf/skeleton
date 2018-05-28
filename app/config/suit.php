@@ -5,7 +5,7 @@ $cache_dir = \dirname(__DIR__).'/cache';
 
 return [
     'providers' => [
-        '\App\Provider',
+        '\App\Provider\App',
         '\Wtf\Rest\Provider',
         '\Wtf\ORM\Provider',
         '\Wtf\Auth\Provider',
@@ -27,6 +27,7 @@ return [
             ],
             'prefixes' => [
                 \dirname(__DIR__).'/src/',
+                \dirname(__DIR__),
             ],
             'tags' => [
                 'interface' => PHP_SAPI,

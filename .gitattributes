@@ -12,4 +12,4 @@
 # Exclude non-essential files from dist
 *.md export-ignore
 LICENSE export-ignore
-_config.yml
+_config.yml export-ignore
