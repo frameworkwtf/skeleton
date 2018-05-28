@@ -29,5 +29,19 @@ class Wtf implements ServiceProviderInterface
 
             return $logger;
         };
+        $container['service'] = $container->protect(function (string $name) use ($container) {
+            if (!$container->has('service_'.$name)) {
+                $parts = \explode('_', $name);
+                $class = 'App\\Service';
+                foreach ($parts as $part) {
+                    $class .= '\\'.\ucfirst($part);
+                }
+                $container['service_'.$name] = function ($container) use ($class) {
+                    return new $class($container);
+                };
+            }
+
+            return $container['service_'.$name];
+        });
     }
 }
