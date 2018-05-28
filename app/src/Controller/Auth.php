@@ -11,26 +11,45 @@ namespace App\Controller;
  */
 class Auth extends \App\Controller
 {
-    /**
-     * Create JWT token by POST with body == "login=userlogin@maybe.email&password=userpassword".
-     */
+    public function loginFormAction()
+    {
+        return $this->render('auth/flogin.html');
+    }
+
     public function loginAction()
     {
         $data = $this->request->getParsedBody();
-        $token = $this->auth->login($data['login'] ?? null, $data['password'] ?? null);
-        if (null === $token) {
-            return $this->json([
-                'error' => [
-                    'message' => 'Incorrect credentials',
-                    'fields' => [
-                        'login' => 'May be incorrect',
-                        'password' => 'May be incorrect',
-                    ],
-                ],
-            ]);
+        $loggedIn = $this->auth->login($data['login'] ?? null, $data['password'] ?? null);
+        if (!$loggedIn) {
+            $this->flash->addMessage('danger', 'Incorrect login or password');
+
+            return $this->redirect('/auth');
         }
 
-        return $this->json(['token' => $token]);
+        $this->flash->addMessage('success', 'Welcome, '.$this->auth->getUser()->getName());
+
+        return $this->redirect('/');
+    }
+
+    public function registerFormAction()
+    {
+        return $this->render('auth/register.html');
+    }
+
+    public function registerAction()
+    {
+        $data = $this->request->getParsedBody();
+        try {
+            $this->entity('user')->register($data);
+        } catch (\Throwable $t) {
+            $this->flash->addMessage('danger', $t->getMessage());
+
+            return $this->redirect('/auth/register');
+        }
+
+        $this->auth->login($data['login'], $data['password']);
+
+        return $this->redirect('/');
     }
 
     /**
@@ -40,26 +59,20 @@ class Auth extends \App\Controller
     {
         $this->auth->logout();
 
-        return $this->json([]);
+        return $this->redirect('/auth');
     }
 
     /**
      * If user forgot password, use that endpoint, POST with body "login=userlogin@or-ema.il"
      * Use $code var to send link to user email/phone/etc.
      */
-    public function forgotAction()
+    public function forgotAction(): void
     {
         $data = $this->request->getParsedBody();
         $code = $this->auth->forgot($data['login'] ?? null);
         if ('' === $code) {
-            return $this->json([
-                'error' => [
-                    'message' => 'User not found',
-                    'fields' => [
-                        'login' => 'Login incorrect',
-                    ],
-                ],
-            ]);
+            $this->flash->addMessage('danger', 'Login incorrect');
+            $this->redirect('/auth');
         }
 
         //@TODO for developers: implement sending link with $code to user email/phone/etc.
@@ -76,17 +89,10 @@ class Auth extends \App\Controller
         $data = $this->request->getParsedBody();
         $isReset = $this->auth->reset($data['code'] ?? null, $data['password'] ?? null);
         if (false === $isReset) {
-            return $this->json([
-                'error' => [
-                    'message' => 'User not found',
-                    'fields' => [
-                        'code' => 'Code incorrect',
-                        'new_password' => 'Required',
-                    ],
-                ],
-            ]);
+            $this->flash->addMessage('danger', 'Reset code is incorrect');
+            $this->redirect('/auth');
         }
 
-        return $this->json([]);
+        return $this->redirect('/');
     }
 }

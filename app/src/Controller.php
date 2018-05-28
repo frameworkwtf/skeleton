@@ -42,21 +42,49 @@ class Controller extends Root
             $action = \strtolower(\end($name)).'Action';
 
             if (\method_exists($this, $action)) {
-                $response = \call_user_func([$this, $action]);
-            } else {
-                $response = $this->notFoundHandler->__invoke($this->request, $this->response);
+                return \call_user_func([$this, $action]);
             }
-        } else {
-            $response = $this->notFoundHandler->__invoke($this->request, $this->response);
-        }
-        $this->logger->debug('Request '.$request->getUri()->__toString(), [
-            'method' => $request->getMethod(),
-            'status' => $response->getStatusCode(),
-            'request body' => $request->getParsedBody(),
-            'response body' => $response->getBody()->__toString(),
-        ]);
 
-        return $response;
+            return $this->notFound();
+        }
+
+        return $this->notFound();
+    }
+
+    /**
+     * Render view.
+     *
+     * @param string $template    Template file name
+     * @param array  $vars        Template vars
+     * @param int    $status_code HTTP status code, default: 200
+     *
+     * @return ResponseInterface
+     */
+    public function render(string $template, array $vars = [], int $status_code = 200): ResponseInterface
+    {
+        return $this->view->render($this->response, $template, $vars)->withStatus($status_code);
+    }
+
+    /**
+     * Return response with location header.
+     *
+     * @param string $location
+     *
+     * @return ResponseInterface
+     */
+    public function redirect(string $location): ResponseInterface
+    {
+        return $this->response->withHeader('Location', $location);
+    }
+
+    /**
+     * Return 404 response.
+     *
+     * @return ResponseInterface
+     */
+    public function notFound(): ResponseInterface
+    {
+        return $this->notFoundHandler->__invoke($this->request, $this->response);
     }
 
     /**

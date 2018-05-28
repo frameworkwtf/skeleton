@@ -7,9 +7,8 @@
         "monolog/monolog": "@stable",
         "wtf/auth": "^1",
         "wtf/core": "^1",
-        "wtf/middleware-filters": "^1",
-        "wtf/orm": "^1",
-        "wtf/rest": "^1"
+        "wtf/html": "^1.0",
+        "wtf/orm": "^1.1"
     },
     "autoload": {
         "psr-4": {
