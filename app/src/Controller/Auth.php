@@ -11,9 +11,11 @@ namespace App\Controller;
  */
 class Auth extends \App\Controller
 {
-    public function loginFormAction()
+    public function formAction()
     {
-        return $this->render('auth/flogin.html');
+        return $this->render('auth/form.html', [
+            'resetCode' => $this->request->getAttribute('reset_code'),
+        ]);
     }
 
     public function loginAction()
@@ -26,14 +28,9 @@ class Auth extends \App\Controller
             return $this->redirect('/auth');
         }
 
-        $this->flash->addMessage('success', 'Welcome, '.$this->auth->getUser()->getName());
+        $this->flash->addMessage('success', 'Welcome');
 
         return $this->redirect('/');
-    }
-
-    public function registerFormAction()
-    {
-        return $this->render('auth/register.html');
     }
 
     public function registerAction()
@@ -44,7 +41,7 @@ class Auth extends \App\Controller
         } catch (\Throwable $t) {
             $this->flash->addMessage('danger', $t->getMessage());
 
-            return $this->redirect('/auth/register');
+            return $this->redirect('/auth');
         }
 
         $this->auth->login($data['login'], $data['password']);
@@ -74,6 +71,7 @@ class Auth extends \App\Controller
             $this->flash->addMessage('danger', 'Login incorrect');
             $this->redirect('/auth');
         }
+        $this->flash->addMessage('success', 'Magic link with reset code was sent to your email');
 
         //@TODO for developers: implement sending link with $code to user email/phone/etc.
         throw new \Exception('Sending link with code for user NOT implemented');

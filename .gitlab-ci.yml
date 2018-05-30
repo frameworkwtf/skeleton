@@ -2,28 +2,12 @@ image: tico/docker
 
 variables:
   TARGET_PATH: /root/app
+  TARGET_BRANCH: master #branch to build and deploy
   SENTRY_WEBHOOK: https://github.com/getsentry/sentry/issues/2367 #Replace it with your webhook, can be found in sentry project -> releases page
-
-cache:
-  paths:
-    - .php_cs.cache
-    - app/vendor
-
-services:
-  - docker:dind
-
-stages:
-  - test
-  - build
-  - deploy
-
-before_script:
-  - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
 
 .up: &up
   before_script:
     - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
-    - docker-compose run update
     - docker-compose up -d
     - sleep 30
     - docker-compose exec -T app phinx migrate || true
@@ -46,56 +30,35 @@ before_script:
   tags:
     - docker
 
-
-codestyle:
-  stage: test
-  script:
-    - php-cs-fixer fix --dry-run --diff
-  <<: *tags
-
-security:
-  stage: test
-  script:
-    - security-checker security:check composer.lock
-  <<: *tags
-
-unused dependencies:
-  stage: test
-  script:
-    - docker-compose run update
-    - unused-scanner unused.php --silent
-  <<: *tags
-
-phpunit:
-  stage: test
+# tests and build stages merged together to speedup build process
+# Gitlab already has reported issue about docker images caching between build stages for 2 years,
+# but still no solution for it, so we used that workaround
+test and build:
+  stage: build
+  services:
+    - docker:dind
   <<: *up
   script:
-    - docker-compose run phpunit
-  artifacts:
-    name: "phpunit"
-    paths:
-      - app/tests/coverage/
-  <<: *tags
-
-#codeception:
-  #stage: test
-  #<<: *up
-  #script:
-    #- docker-compose run codeception run --html report.html
-  #artifacts:
-    #name: "codeception"
-    #paths:
-      #- app/tests/_output/
-  #<<: *tags
-
-build:
-  stage: build
-  only:
-    - master
-  script:
-    - docker-compose run update
+    # test
+    - composer-install
+    - php-cs-fixer fix --dry-run --diff
+    - security-checker security:check composer.lock
+    - unused-scanner unused.php --silent
+    #- docker-compose run phpunit # unit tests
+    #- docker-compose run codeception run --html report.html #UI tests
+    - if [ "$CI_COMMIT_REF_NAME" != "$TARGET_BRANCH" ]; then exit 0; fi
+    # build
     - docker build -t $CI_REGISTRY_IMAGE .
     - docker push $CI_REGISTRY_IMAGE
+  cache:
+    paths:
+      - .php_cs.cache
+      - app/vendor
+  artifacts: #tests artifacts
+    name: tests
+    paths:
+      - app/tests/coverage/
+      - app/tests/_output/
   <<: *tags
 
 deploy:

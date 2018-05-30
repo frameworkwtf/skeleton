@@ -17,18 +17,8 @@ class App implements ServiceProviderInterface
      */
     public function register(Container $container): void
     {
-        $container['baseurl_middleware'] = $this->setBaseurlMiddleware();
-    }
-
-    /**
-     * Set Baseurl middleware.
-     *
-     * @return callable
-     */
-    protected function setBaseurlMiddleware(): callable
-    {
-        return function ($c) {
-            return new Middleware\Baseurl($c);
+        $container['baseurl_middleware'] = function ($c) {
+            return new \App\Middleware\Baseurl($c);
         };
     }
 }

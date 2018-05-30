@@ -8,5 +8,8 @@ return [
     'repository' => \Wtf\Auth\Repository\User::class, // default user repository
     'rbac' => [
         'defaultRole' => 'anonymous', //default unauthorized role
+        'errorCallback' => function ($request, $response) {
+            return $response->withHeader('Location', '/auth');
+        },
     ],
 ];

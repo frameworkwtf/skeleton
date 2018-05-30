@@ -5,14 +5,18 @@ $cache_dir = \dirname(__DIR__).'/cache';
 
 return [
     'providers' => [
-        '\App\Provider\App',
         '\Wtf\Html\Provider',
         '\Wtf\Auth\Provider',
+        '\App\Provider\Wtf',
+        '\App\Provider\App',
     ],
     'middlewares' => [
         'baseurl_middleware',
         'rbac_middleware',
+        'auth_middleware',
+        'session_middleware',
     ],
+
     'sentry' => [
         'dsn' => 'https://fa38d114872b4533834f0ffd53e59ddc:54ffe4da5b23455da1b93d4b6abc246e@sentry.io/211424', //@TODO REPLACE ME
         'options' => [
