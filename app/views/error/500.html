@@ -1,0 +1,8 @@
+{% extends 'layout.anonymous.html' %}
+{% block body %}
+<h1>Oops, something went wrong</h1>
+<p><b>Don't worry!</b> Developers already notified about that incident and they have all required information to fix it as soon as possible.</p>
+<p class="text-muted">If you want details, here is error message:
+<code><pre>{{ message|raw }}</pre></code>
+</p>
+{% endblock %}

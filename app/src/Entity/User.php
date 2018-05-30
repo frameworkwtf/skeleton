@@ -36,4 +36,14 @@ class User extends Entity
     {
         return [];
     }
+
+    /**
+     * Register new user.
+     *
+     * @param array $data
+     * @TODO You should implement it yourself
+     */
+    public function register(array $data): void
+    {
+    }
 }

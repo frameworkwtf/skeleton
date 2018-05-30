@@ -8,7 +8,7 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Throwable;
 
-class ErrorHandler extends \Wtf\Root
+class ErrorHandler extends \App\Controller
 {
     /**
      * Handle exception.

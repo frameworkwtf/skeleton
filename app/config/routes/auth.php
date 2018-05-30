@@ -3,12 +3,6 @@
 declare(strict_types=1);
 
 return [
-    'loginForm' => [
-        'pattern' => '',
-        'rbac' => [
-            'anonymous' => ['GET'],
-        ],
-    ],
     'login' => [
         'pattern' => '/login',
         'methods' => ['POST'],
@@ -16,14 +10,8 @@ return [
             'anonymous' => ['POST'],
         ],
     ],
-    'registerForm' => [
+    'register' => [
         'pattern' => '/register',
-        'rbac' => [
-            'anonymous' => ['GET'],
-        ],
-    ],
-    'create' => [
-        'pattern' => '/create',
         'methods' => ['POST'],
         'rbac' => [
             'anonymous' => ['POST'],
@@ -33,6 +21,12 @@ return [
         'pattern' => '/logout',
         'rbac' => [
             'user' => ['GET'],
+        ],
+    ],
+    'form' => [
+        'pattern' => '[/{reset_code}]',
+        'rbac' => [
+            'anonymous' => ['GET'],
         ],
     ],
 ];
