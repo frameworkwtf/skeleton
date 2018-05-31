@@ -17,6 +17,20 @@ return [
             'anonymous' => ['POST'],
         ],
     ],
+    'forgot' => [
+        'pattern' => '/forgot',
+        'methods' => ['POST'],
+        'rbac' => [
+            'anonymous' => ['POST'],
+        ],
+    ],
+    'reset' => [
+        'pattern' => '/reset',
+        'methods' => ['POST'],
+        'rbac' => [
+            'anonymous' => ['POST'],
+        ],
+    ],
     'logout' => [
         'pattern' => '/logout',
         'rbac' => [
